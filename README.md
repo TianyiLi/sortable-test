@@ -8,26 +8,30 @@ used
 <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
 ```
 
-
 copy index.html `initializeSimpleDragDrop` function
 
 basic structure
 
 ```ts
-
 interface ListOfSortable {
-  name: string;
-  value: string;
-  enabled: boolean;
+  name: string
+  value: string
+  enabled: boolean
 }
 
-function initializeSimpleDragDrop($wrapper: JQuery, $menuWrapper: JQuery, list: ListOfSortable[]):void;
-
+function initializeSimpleDragDrop(
+  $wrapper: JQuery,
+  $menuWrapper: JQuery,
+  list: ListOfSortable[]
+): {
+  getValue: () => string[]
+  addOption: ({ name, value }: { name: string; value: string }) => boolean
+  removeOption: (value) => boolean
+}
 ```
 
 get the sorted list
 
 ```js
-const list = $wrapper.find('[data-value]').toArray()
-const valueList = list.map(ele => ele.getAttribute('data-value'))
+const list = menu.getValue()
 ```
