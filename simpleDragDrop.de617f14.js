@@ -117,79 +117,148 @@ parcelRequire = (function (modules, cache, entry, globalName) {
   }
 
   return newRequire;
-})({"../../../.nvm/versions/node/v14.4.0/lib/node_modules/parcel-bundler/src/builtins/bundle-url.js":[function(require,module,exports) {
-var bundleURL = null;
+})({"simpleDragDrop.js":[function(require,module,exports) {
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
-function getBundleURLCached() {
-  if (!bundleURL) {
-    bundleURL = getBundleURL();
-  }
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-  return bundleURL;
-}
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-function getBundleURL() {
-  // Attempt to find the URL of the current script and use that as the base URL
-  try {
-    throw new Error();
-  } catch (err) {
-    var matches = ('' + err.stack).match(/(https?|file|ftp|chrome-extension|moz-extension):\/\/[^)\n]+/g);
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
 
-    if (matches) {
-      return getBaseURL(matches[0]);
-    }
-  }
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
-  return '/';
-}
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function getBaseURL(url) {
-  return ('' + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)\/[^/]+$/, '$1') + '/';
-}
+var valueOfSelect = Array.from({
+  length: 20
+}, function (_, i) {
+  return {
+    name: i,
+    value: "".concat(i),
+    enabled: !!(i % 2)
+  };
+});
 
-exports.getBundleURL = getBundleURLCached;
-exports.getBaseURL = getBaseURL;
-},{}],"../../../.nvm/versions/node/v14.4.0/lib/node_modules/parcel-bundler/src/builtins/css-loader.js":[function(require,module,exports) {
-var bundle = require('./bundle-url');
+function initializeSimpleDragDrop() {
+  var $wrapper = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : $('#sort-list');
+  var $menuWrapper = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : $('#enabled-fields');
+  var list = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : valueOfSelect;
+  var dictOfValue = new Map(valueOfSelect.map(function (ele) {
+    return [ele.value, ele];
+  }));
 
-function updateLink(link) {
-  var newLink = link.cloneNode();
-
-  newLink.onload = function () {
-    link.remove();
+  var createBaseTag = function createBaseTag(_ref) {
+    var name = _ref.name,
+        value = _ref.value;
+    var $node = $("<div data-value=\"".concat(value, "\" class=\"col\">").concat(name, "</div>"));
+    var $cancel = $("<i class=\"fa fa-times cancel\" data-value=\"".concat(value, "\" aria-hidden=\"true\"></i>"));
+    $cancel.click(function (e) {
+      onSelectClick({
+        target: $menuWrapper.find("[data-value=\"".concat(value, "\"]"))[0]
+      });
+    });
+    $node.append($cancel);
+    return $node;
   };
 
-  newLink.href = link.href.split('?')[0] + '?' + Date.now();
-  link.parentNode.insertBefore(newLink, link.nextSibling);
-}
+  function onSelectClick(e) {
+    var $target = $(e.target);
+    var value = $target.attr('data-value');
 
-var cssTimeout = null;
+    var _nodeValue = dictOfValue.get(value);
 
-function reloadCSS() {
-  if (cssTimeout) {
-    return;
-  }
-
-  cssTimeout = setTimeout(function () {
-    var links = document.querySelectorAll('link[rel="stylesheet"]');
-
-    for (var i = 0; i < links.length; i++) {
-      if (bundle.getBaseURL(links[i].href) === bundle.getBundleURL()) {
-        updateLink(links[i]);
-      }
+    if (_nodeValue.enabled) {
+      $target.removeClass('checked');
+      $wrapper.find("[data-value=\"".concat(value, "\"]")).remove();
+    } else {
+      $target.addClass('checked');
+      $wrapper.append(createBaseTag(_nodeValue));
     }
 
-    cssTimeout = null;
-  }, 50);
+    _nodeValue.enabled = !_nodeValue.enabled;
+  }
+
+  var createBaseSelect = function createBaseSelect(_ref2) {
+    var name = _ref2.name,
+        value = _ref2.value,
+        enabled = _ref2.enabled;
+    var $select = $("<div data-value=\"".concat(value, "\" class=\"select ").concat(enabled ? 'checked' : '', "\">").concat(name, "</div>"));
+    $select.click(onSelectClick);
+    return $select;
+  };
+
+  var _list = list.filter(function (_ref3) {
+    var enabled = _ref3.enabled;
+    return enabled;
+  }).map(function (_ref4) {
+    var value = _ref4.value,
+        name = _ref4.name;
+    return createBaseTag({
+      value: value,
+      name: name
+    });
+  });
+
+  var _selectList = list.map(function (ele) {
+    return createBaseSelect(ele);
+  });
+
+  _list.forEach(function (e) {
+    return $wrapper.append(e);
+  });
+
+  _selectList.forEach(function (e) {
+    return $menuWrapper.append(e);
+  });
+
+  $wrapper.sortable({
+    ghostClass: 'col-ghost'
+  });
+  return {
+    getValue: function getValue() {
+      return _toConsumableArray(dictOfValue).filter(function (ele) {
+        return ele[1].enabled;
+      }).map(function (ele) {
+        return ele[1].value;
+      });
+    },
+    addOption: function addOption(_ref5) {
+      var name = _ref5.name,
+          value = _ref5.value;
+      if (dictOfValue.has(value)) return false;
+      dictOfValue.set(value, {
+        name: name,
+        enabled: true,
+        value: value
+      });
+      $wrapper.append(createBaseTag({
+        name: name,
+        value: value
+      }));
+      $menuWrapper.append(createBaseSelect({
+        name: name,
+        value: value,
+        enabled: true
+      }));
+      return true;
+    },
+    removeOption: function removeOption(value) {
+      var _value = dictOfValue.get(value);
+
+      if (!_value) return false;
+
+      if (_value.enabled) {
+        $menuWrapper.find("[data-value=\"".concat(_value.value, "\"]")).remove();
+      }
+
+      $wrapper.find("[data-value=\"".concat(_value.value, "\"]")).remove();
+      dictOfValue.delete(value);
+      return true;
+    }
+  };
 }
-
-module.exports = reloadCSS;
-},{"./bundle-url":"../../../.nvm/versions/node/v14.4.0/lib/node_modules/parcel-bundler/src/builtins/bundle-url.js"}],"style.styl":[function(require,module,exports) {
-var reloadCSS = require('_css_loader');
-
-module.hot.dispose(reloadCSS);
-module.hot.accept(reloadCSS);
-},{"_css_loader":"../../../.nvm/versions/node/v14.4.0/lib/node_modules/parcel-bundler/src/builtins/css-loader.js"}],"../../../.nvm/versions/node/v14.4.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{}],"../../../.nvm/versions/node/v14.4.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -393,5 +462,5 @@ function hmrAcceptRun(bundle, id) {
     return true;
   }
 }
-},{}]},{},["../../../.nvm/versions/node/v14.4.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js"], null)
-//# sourceMappingURL=/style.9c3b912e.js.map
+},{}]},{},["../../../.nvm/versions/node/v14.4.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js","simpleDragDrop.js"], null)
+//# sourceMappingURL=/simpleDragDrop.de617f14.js.map
