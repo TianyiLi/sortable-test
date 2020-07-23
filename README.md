@@ -8,7 +8,7 @@ used
 <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
 ```
 
-copy index.html `initializeSimpleDragDrop` function
+copy [simpleDragDrop.js](./simpleDragDrop.js) `initializeSimpleDragDrop` function
 
 basic structure
 
