@@ -258,6 +258,8 @@ function initializeSimpleDragDrop() {
     }
   };
 }
+
+window.initializeSimpleDragDrop = initializeSimpleDragDrop;
 },{}],"../../../.nvm/versions/node/v14.4.0/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
