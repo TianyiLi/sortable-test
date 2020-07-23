@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.10.2/Sortable.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="/style.9c3b912e.css">
+<script src="/style.9c3b912e.js"></script></head>
+
+<body>
+  <div class="container">
+    <div class="sortable" id="sort-list"></div>
+    <h3>Select enable options</h3>
+    <div id="enabled-fields">
+    </div>
+    <button id="check">check</button>
+  </div>
+  <script>var valueOfSelect = Array.from({
+  length: 20
+}, function (_, i) {
+  return {
+    name: i,
+    value: "".concat(i),
+    enabled: !!(i % 2)
+  };
+});
+
+function initializeSimpleDragDrop() {
+  var $wrapper = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : $('#sort-list');
+  var $menuWrapper = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : $('#enabled-fields');
+  var list = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : valueOfSelect;
+  var dictOfValue = new Map(valueOfSelect.map(function (ele) {
+    return [ele.value, ele];
+  }));
+
+  var createBaseTag = function createBaseTag(_ref) {
+    var name = _ref.name,
+        value = _ref.value;
+    var $node = $("<div data-value=\"".concat(value, "\" class=\"col\">").concat(name, "</div>"));
+    var $cancel = $("<i class=\"fa fa-times cancel\" data-value=\"".concat(value, "\" aria-hidden=\"true\"></i>"));
+    $cancel.click(function (e) {
+      onSelectClick({
+        target: $menuWrapper.find("[data-value=\"".concat(value, "\"]"))[0]
+      });
+    });
+    $node.append($cancel);
+    return $node;
+  };
+
+  function onSelectClick(e) {
+    var $target = $(e.target);
+    var value = $target.attr('data-value');
+
+    var _nodeValue = dictOfValue.get(value);
+
+    if (_nodeValue.enabled) {
+      $target.removeClass('checked');
+      $wrapper.find("[data-value=\"".concat(value, "\"]")).remove();
+    } else {
+      $target.addClass('checked');
+      $wrapper.append(createBaseTag(_nodeValue));
+    }
+
+    _nodeValue.enabled = !_nodeValue.enabled;
+  }
+
+  var createBaseSelect = function createBaseSelect(_ref2) {
+    var name = _ref2.name,
+        value = _ref2.value,
+        enabled = _ref2.enabled;
+    var $select = $("<div data-value=\"".concat(value, "\" class=\"select ").concat(enabled ? 'checked' : '', "\">").concat(name, "</div>"));
+    $select.click(onSelectClick);
+    return $select;
+  };
+
+  var _list = list.filter(function (_ref3) {
+    var enabled = _ref3.enabled;
+    return enabled;
+  }).map(function (_ref4) {
+    var value = _ref4.value,
+        name = _ref4.name;
+    return createBaseTag({
+      value: value,
+      name: name
+    });
+  });
+
+  var _selectList = list.map(function (ele) {
+    return createBaseSelect(ele);
+  });
+
+  _list.forEach(function (e) {
+    return $wrapper.append(e);
+  });
+
+  _selectList.forEach(function (e) {
+    return $menuWrapper.append(e);
+  });
+
+  $wrapper.sortable({
+    ghostClass: 'col-ghost'
+  });
+}
+
+initializeSimpleDragDrop();
+$('#check').click(function () {
+  var listOfTags = $wrapper.find('.col').toArray();
+  console.log(listOfTags.map(function (ele) {
+    return ele.getAttribute('data-value');
+  }));
+});</script>
+</body>
+
+</html>

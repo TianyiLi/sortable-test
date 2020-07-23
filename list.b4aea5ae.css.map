@@ -1,0 +1,1 @@
+{"version":3,"sources":["list.styl"],"names":[],"mappings":"AAAA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA","file":"list.b4aea5ae.css","sourceRoot":"..","sourcesContent":[".checkbox-outer {\n  box-sizing: border-box;\n  margin: 0;\n  padding: 0;\n  color: #000;\n  font-size: 14px;\n}\nul {\n  list-style: none;\n}\n"]}

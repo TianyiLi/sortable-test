@@ -1,0 +1,47 @@
+#sort-list {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 30px;
+  background-color: #000;
+}
+#sort-list .col {
+  background-color: #fff;
+  line-height: 0.8rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 1rem;
+  margin: 12px;
+  padding: 0.4rem 1rem;
+  min-width: 70px;
+}
+#sort-list .col .cancel {
+  cursor: pointer;
+  margin-left: 15px;
+}
+#sort-list .col-ghost {
+  background-color: #f00;
+}
+h2 {
+  width: 100%;
+  margin-right: auto;
+}
+#enabled-fields {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 30px;
+}
+.select {
+  background-color: #f00;
+  padding: 0.3em 0.8em;
+  height: 1.3rem;
+  cursor: pointer;
+  color: #fff;
+  margin: 8px;
+}
+.checked {
+  background-color: #008000;
+}
+
+
+/*# sourceMappingURL=/style.9c3b912e.css.map */
