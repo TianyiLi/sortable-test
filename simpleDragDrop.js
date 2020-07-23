@@ -78,3 +78,5 @@ function initializeSimpleDragDrop(
     },
   }
 }
+
+window.initializeSimpleDragDrop = initializeSimpleDragDrop
