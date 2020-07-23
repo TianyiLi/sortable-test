@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.10.2/Sortable.js'></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+  <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
+  <link rel="stylesheet"
+    href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet"
+    href="style.styl">
+</head>
+
+<body>
+  <div class="container">
+    <div class="sortable"
+      id="sort-list"></div>
+    <h3>Select enable options</h3>
+    <div id="enabled-fields">
+    </div>
+    <button id="check">check</button>
+  </div>
+  <script>
+    const valueOfSelect = Array.from({ length: 20 }, (_, i) => ({ name: i, value: `${i}`, enabled: !!(i % 2) }))
+
+    function initializeSimpleDragDrop($wrapper = $('#sort-list'), $menuWrapper=$('#enabled-fields'), list = valueOfSelect) {
+      const dictOfValue = new Map(valueOfSelect.map(ele => ([ele.value, ele])))
+      const createBaseTag = ({ name, value }) => {
+        const $node = $(`<div data-value="${value}" class="col">${name}</div>`)
+        const $cancel = $(`<i class="fa fa-times cancel" data-value="${value}" aria-hidden="true"></i>`)
+        $cancel.click(e => {
+          onSelectClick({ target: $menuWrapper.find(`[data-value="${value}"]`)[0] })
+        })
+        $node.append($cancel)
+        return $node
+      }
+      function onSelectClick(e) {
+        const $target = $(e.target)
+        const value = $target.attr('data-value')
+        const _nodeValue = dictOfValue.get(value)
+        if (_nodeValue.enabled) {
+          $target.removeClass('checked')
+          $wrapper.find(`[data-value="${value}"]`).remove();
+        } else {
+          $target.addClass('checked')
+          $wrapper.append(createBaseTag(_nodeValue))
+        }
+        _nodeValue.enabled = !_nodeValue.enabled
+      }
+
+      const createBaseSelect = ({ name, value, enabled }) => {
+        const $select = $(`<div data-value="${value}" class="select ${enabled ? 'checked' : ''}">${name}</div>`)
+        $select.click(onSelectClick)
+        return $select
+      }
+      const _list = list.filter(({ enabled }) => enabled).map(({ value, name }) => createBaseTag({ value, name }))
+      const _selectList = list.map(ele => createBaseSelect(ele))
+      _list.forEach(e => $wrapper.append(e))
+      _selectList.forEach(e => $menuWrapper.append(e))
+      $wrapper.sortable({
+        ghostClass: 'col-ghost'
+      })
+    }
+
+    initializeSimpleDragDrop()
+
+    $('#check').click(() => {
+      const listOfTags = $wrapper.find('.col').toArray()
+      console.log(listOfTags.map(ele => ele.getAttribute('data-value')))
+    })
+  </script>
+</body>
+
+</html>
